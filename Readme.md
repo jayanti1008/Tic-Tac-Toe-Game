@@ -203,7 +203,7 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## 👨‍💻 Author
 
-**Your Name**
+**Jayanti**
 - GitHub: (https://github.com/jayanti1008)
 - LinkedIn: (https://www.linkedin.com/in/jayanti-singh-50683332b)
 
