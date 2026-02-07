@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Bebas+Neue&family=Fredoka+One&family=Londrina+Solid:wght@900&family=Titan+One&family=Bungee&family=Righteous&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Righteous', cursive;
+            background: linear-gradient(180deg, #3d2817 0%, #5c3d2e 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #f5deb3;
+        }
+
+        .container {
+            text-align: center;
+            background: 
+                repeating-linear-gradient(90deg, 
+                    #4a3020 0px, #4a3020 80px,
+                    #3d2817 80px, #3d2817 82px,
+                    #5c3d2e 82px, #5c3d2e 160px,
+                    #3d2817 160px, #3d2817 162px
+                ),
+                repeating-linear-gradient(0deg,
+                    transparent 0px, transparent 8px,
+                    rgba(0,0,0,0.1) 8px, rgba(0,0,0,0.1) 9px
+                );
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5),
+                        inset 0 1px 0 rgba(255,255,255,0.1);
+            position: relative;
+            max-width: 600px;
+        }
+
+        .wood-texture {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                repeating-linear-gradient(90deg,
+                    transparent, transparent 3px,
+                    rgba(0,0,0,0.05) 3px, rgba(0,0,0,0.05) 4px
+                );
+            pointer-events: none;
+            border-radius: 20px;
+        }
+
+        h1 {
+            font-size: 3.5em;
+            margin-bottom: 30px;
+            text-shadow: 4px 4px 0px rgba(0,0,0,0.3);
+            letter-spacing: 6px;
+            color: #f5deb3;
+            position: relative;
+            z-index: 1;
+            font-family: 'Bungee', cursive;
+            font-weight: 400;
+        }
+
+        .menu-screen, .grid-select-screen, .game-screen {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .board-preview {
+            display: inline-grid;
+            gap: 8px;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+        }
+
+        .board-preview.grid-3x3 {
+            grid-template-columns: repeat(3, 80px);
+        }
+
+        .preview-cell {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #6b4423 0%, #4a2f1a 100%);
+            border: 3px solid #3d2414;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            font-weight: bold;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3),
+                        0 4px 8px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .preview-cell::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(90deg,
+                transparent 0, transparent 10px,
+                rgba(0,0,0,0.03) 10px, rgba(0,0,0,0.03) 11px
+            );
+            border-radius: 5px;
+        }
+
+        .x-mark {
+            color: #ff4757;
+            text-shadow: 3px 3px 0px rgba(0,0,0,0.3),
+                         0 0 20px rgba(255, 71, 87, 0.4);
+            font-family: 'Titan One', cursive;
+            font-weight: 900;
+            letter-spacing: -2px;
+        }
+
+        .o-mark {
+            color: #5f6caf;
+            text-shadow: 3px 3px 0px rgba(0,0,0,0.3),
+                         0 0 20px rgba(95, 108, 175, 0.4);
+            font-family: 'Titan One', cursive;
+            font-weight: 900;
+        }
+
+        button {
+            background: linear-gradient(180deg, #d4a574 0%, #b8935f 50%, #a67c52 100%);
+            color: #2d1810;
+            border: none;
+            padding: 18px 60px;
+            font-size: 1.5em;
+            font-weight: bold;
+            border-radius: 15px;
+            cursor: pointer;
+            margin: 10px;
+            box-shadow: 0 6px 0 #7d5a3a,
+                        0 8px 20px rgba(0,0,0,0.4);
+            transition: all 0.1s;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.3);
+            position: relative;
+            z-index: 1;
+            font-family: 'Righteous', cursive;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            background: linear-gradient(180deg, #e0b589 0%, #c49f6f 50%, #b38a61 100%);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #7d5a3a,
+                        0 4px 10px rgba(0,0,0,0.4);
+        }
+
+        .grid-options {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .grid-option {
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .grid-option:hover {
+            transform: scale(1.05);
+        }
+
+        .grid-preview {
+            display: inline-grid;
+            gap: 4px;
+            padding: 15px;
+            background: linear-gradient(135deg, #d4a574 0%, #b8935f 100%);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 6px 0 #7d5a3a,
+                        0 8px 20px rgba(0,0,0,0.4);
+        }
+
+        .grid-preview.size-3 {
+            grid-template-columns: repeat(3, 25px);
+        }
+
+        .grid-preview.size-5 {
+            grid-template-columns: repeat(5, 20px);
+        }
+
+        .grid-preview.size-7 {
+            grid-template-columns: repeat(7, 18px);
+        }
+
+        .grid-preview-cell {
+            background: #6b4423;
+            border: 1px solid #4a2f1a;
+            aspect-ratio: 1;
+        }
+
+        .grid-label {
+            font-size: 2em;
+            font-weight: bold;
+            color: #f5deb3;
+            text-shadow: 3px 3px 0px rgba(0,0,0,0.3);
+            font-family: 'Bungee', cursive;
+            letter-spacing: 2px;
+        }
+
+        .game-board {
+            display: inline-grid;
+            gap: 8px;
+            margin: 30px auto;
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+        }
+
+        .game-board.grid-3 {
+            grid-template-columns: repeat(3, 100px);
+        }
+
+        .game-board.grid-5 {
+            grid-template-columns: repeat(5, 70px);
+        }
+
+        .game-board.grid-7 {
+            grid-template-columns: repeat(7, 55px);
+        }
+
+        .cell {
+            background: linear-gradient(135deg, #6b4423 0%, #4a2f1a 100%);
+            border: 3px solid #3d2414;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3),
+                        0 4px 8px rgba(0,0,0,0.3);
+            position: relative;
+            aspect-ratio: 1;
+        }
+
+        .cell::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(90deg,
+                transparent 0, transparent 10px,
+                rgba(0,0,0,0.03) 10px, rgba(0,0,0,0.03) 11px
+            );
+            border-radius: 5px;
+        }
+
+        .game-board.grid-3 .cell {
+            width: 100px;
+            height: 100px;
+            font-size: 3em;
+        }
+
+        .game-board.grid-5 .cell {
+            width: 70px;
+            height: 70px;
+            font-size: 2em;
+        }
+
+        .game-board.grid-7 .cell {
+            width: 55px;
+            height: 55px;
+            font-size: 1.5em;
+        }
+
+        .cell:hover:not(.filled) {
+            background: linear-gradient(135deg, #7d5535 0%, #5a3a2a 100%);
+            transform: scale(1.05);
+        }
+
+        .cell.filled {
+            cursor: not-allowed;
+        }
+
+        .cell.winning {
+            background: linear-gradient(135deg, #8b6f47 0%, #6b5437 100%);
+            animation: pulse 0.5s ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .status {
+            font-size: 2em;
+            margin: 20px 0;
+            font-weight: bold;
+            color: #f5deb3;
+            text-shadow: 3px 3px 0px rgba(0,0,0,0.3);
+            min-height: 40px;
+            font-family: 'Righteous', cursive;
+            letter-spacing: 1px;
+        }
+
+        .controls {
+            margin-top: 30px;
+        }
+
+        .info-btn, .sound-btn, .close-btn {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #d4a574 0%, #b8935f 100%);
+            border: 3px solid #8d6a47;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            color: #2d1810;
+            box-shadow: 0 4px 0 #7d5a3a, 0 6px 15px rgba(0,0,0,0.4);
+            transition: all 0.1s;
+            padding: 0;
+            z-index: 10;
+        }
+
+        .info-btn {
+            top: 20px;
+            left: 20px;
+        }
+
+        .sound-btn {
+            top: 20px;
+            right: 20px;
+        }
+
+        .close-btn {
+            top: 20px;
+            right: 20px;
+        }
+
+        .info-btn:hover, .sound-btn:hover, .close-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .info-btn:active, .sound-btn:active, .close-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #7d5a3a, 0 4px 10px rgba(0,0,0,0.4);
+        }
+
+        .star-counter {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5em;
+            color: #d4a574;
+            z-index: 10;
+        }
+
+        .star {
+            color: #ffd700;
+            font-size: 1.8em;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+        }
+
+        /* Win Dialog Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .win-dialog {
+            background: 
+                repeating-linear-gradient(90deg, 
+                    #4a3020 0px, #4a3020 80px,
+                    #3d2817 80px, #3d2817 82px,
+                    #5c3d2e 82px, #5c3d2e 160px,
+                    #3d2817 160px, #3d2817 162px
+                );
+            border: 8px solid #3d2414;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            position: relative;
+            min-width: 350px;
+        }
+
+        .win-dialog::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                repeating-linear-gradient(90deg,
+                    transparent, transparent 3px,
+                    rgba(0,0,0,0.05) 3px, rgba(0,0,0,0.05) 4px
+                );
+            pointer-events: none;
+            border-radius: 12px;
+        }
+
+        .win-symbol {
+            font-size: 6em;
+            margin-bottom: 20px;
+            filter: drop-shadow(4px 4px 8px rgba(0,0,0,0.6));
+        }
+
+        .win-text {
+            font-family: 'Bungee', cursive;
+            font-size: 2.8em;
+            color: #fff;
+            text-shadow: 4px 4px 0px rgba(0,0,0,0.4);
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        .win-points {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            font-size: 2em;
+        }
+
+        .win-points .star {
+            font-size: 2em;
+            animation: sparkle 1s infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.2) rotate(180deg); }
+        }
+
+        .play-again-btn {
+            background: linear-gradient(180deg, #d4a574 0%, #b8935f 50%, #a67c52 100%);
+            color: #2d1810;
+            border: none;
+            padding: 18px 50px;
+            font-size: 1.6em;
+            font-weight: bold;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #7d5a3a, 0 8px 20px rgba(0,0,0,0.4);
+            transition: all 0.1s;
+            font-family: 'Righteous', cursive;
+            letter-spacing: 1px;
+        }
+
+        .play-again-btn:hover {
+            background: linear-gradient(180deg, #e0b589 0%, #c49f6f 50%, #b38a61 100%);
+            transform: translateY(-2px);
+        }
+
+        .play-again-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #7d5a3a, 0 4px 10px rgba(0,0,0,0.4);
+        }
+
+        /* Info Panel */
+        .info-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .info-content {
+            background: 
+                repeating-linear-gradient(90deg, 
+                    #4a3020 0px, #4a3020 80px,
+                    #3d2817 80px, #3d2817 82px,
+                    #5c3d2e 82px, #5c3d2e 160px,
+                    #3d2817 160px, #3d2817 162px
+                );
+            border: 8px solid #3d2414;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .info-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                repeating-linear-gradient(90deg,
+                    transparent, transparent 3px,
+                    rgba(0,0,0,0.05) 3px, rgba(0,0,0,0.05) 4px
+                );
+            pointer-events: none;
+            border-radius: 12px;
+        }
+
+        .info-content h2 {
+            font-family: 'Bungee', cursive;
+            font-size: 2.5em;
+            color: #f5deb3;
+            margin-bottom: 20px;
+            text-align: center;
+            letter-spacing: 2px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 3px 3px 0px rgba(0,0,0,0.3);
+        }
+
+        .info-content p, .info-content ul {
+            font-family: 'Righteous', cursive;
+            color: #f5deb3;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+            font-size: 0.9em;
+        }
+
+        .info-content ul {
+            padding-left: 25px;
+        }
+
+        .info-content li {
+            margin-bottom: 10px;
+        }
+
+        .info-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #d4a574 0%, #b8935f 100%);
+            border: 3px solid #8d6a47;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            color: #2d1810;
+            box-shadow: 0 4px 0 #7d5a3a;
+            z-index: 2;
+        }
+
+        .info-close:hover {
+            transform: scale(1.1);
+        }
+
+        .info-close:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #7d5a3a;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="wood-texture"></div>
+        
+        <!-- Info Panel -->
+        <div class="info-panel hidden" id="infoPanel">
+            <div class="info-content">
+                <div class="info-close" onclick="closeInfo()">✕</div>
+                <h2>HOW TO PLAY</h2>
+                <p><strong>Objective:</strong></p>
+                <p>Be the first player to get 3 marks in a row!</p>
+                
+                <p><strong>Rules:</strong></p>
+                <ul>
+                    <li>Players take turns placing their mark (X or O) on the grid</li>
+                    <li>Get 3 of your marks in a row to win (horizontal, vertical, or diagonal)</li>
+                    <li>Works on any grid size: 3×3, 5×5, or 7×7</li>
+                    <li>If all spaces are filled with no winner, the game is a draw</li>
+                </ul>
+                
+                <p><strong>Game Modes:</strong></p>
+                <ul>
+                    <li><strong>1 Player:</strong> Play against the computer</li>
+                    <li><strong>2 Players:</strong> Play with a friend</li>
+                </ul>
+                
+                <p><strong>Points System:</strong></p>
+                <ul>
+                    <li>Win a game: Earn 1 star ⭐</li>
+                    <li>Track your stars across multiple games</li>
+                </ul>
+                
+                <p style="text-align: center; margin-top: 25px; font-size: 1.1em; color: #d4a574;">
+                    Have fun playing!
+                </p>
+            </div>
+        </div>
+
+        <!-- Win Dialog -->
+        <div class="modal-overlay hidden" id="winModal">
+            <div class="win-dialog">
+                <div class="win-symbol" id="winSymbol"></div>
+                <div class="win-text" id="winText"></div>
+                <div class="win-points">
+                    <span class="star">★</span>
+                    <span id="winPointsCount">0</span>
+                </div>
+                <button class="play-again-btn" onclick="playAgain()">PLAY AGAIN</button>
+            </div>
+        </div>
+        
+        <!-- Menu Screen -->
+        <div class="menu-screen">
+            <div class="board-preview grid-3x3">
+                <div class="preview-cell"><span class="x-mark">TIC</span></div>
+                <div class="preview-cell"><span class="x-mark">X</span></div>
+                <div class="preview-cell"><span class="o-mark">O</span></div>
+                <div class="preview-cell"><span class="x-mark">X</span></div>
+                <div class="preview-cell"><span class="x-mark">TAC</span></div>
+                <div class="preview-cell"><span class="x-mark">X</span></div>
+                <div class="preview-cell"><span class="o-mark">O</span></div>
+                <div class="preview-cell"><span class="x-mark">X</span></div>
+                <div class="preview-cell"><span class="x-mark">TOE</span></div>
+            </div>
+            <div>
+                <button onclick="startGame(1)">1 Player</button>
+            </div>
+            <div>
+                <button onclick="startGame(2)">2 Players</button>
+            </div>
+        </div>
+
+        <!-- Grid Selection Screen -->
+        <div class="grid-select-screen hidden">
+            <button class="close-btn" onclick="backToMenu()">✕</button>
+            <h1>CHOOSE A GRID</h1>
+            <div class="grid-options">
+                <div class="grid-option" onclick="selectGrid(3)">
+                    <div class="grid-preview size-3">
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                    </div>
+                    <div class="grid-label">3X3</div>
+                </div>
+                <div class="grid-option" onclick="selectGrid(5)">
+                    <div class="grid-preview size-5">
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                    </div>
+                    <div class="grid-label">5X5</div>
+                </div>
+                <div class="grid-option" onclick="selectGrid(7)">
+                    <div class="grid-preview size-7">
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                        <div class="grid-preview-cell"></div>
+                    </div>
+                    <div class="grid-label">7X7</div>
+                </div>
+            </div>
+            <div class="star-counter">
+                <span class="star">★</span>
+                <span id="starCount">0</span>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div class="game-screen hidden">
+            <button class="info-btn" onclick="showInfo()">ⓘ</button>
+            <button class="sound-btn" id="soundBtn">🔊</button>
+            <button class="close-btn" onclick="backToGridSelect()">✕</button>
+            
+            <div class="status" id="status">Player 1 to move</div>
+            <div class="game-board" id="gameBoard"></div>
+            <div class="status" id="instruction">PLACE 3 IN A ROW!</div>
+            
+            <div class="controls">
+                <button onclick="resetGame()">New Game</button>
+                <button onclick="backToGridSelect()">Change Grid</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPlayer = 1;
+        let gameMode = 1; // 1 for single player, 2 for two players
+        let gridSize = 3;
+        let board = [];
+        let gameActive = true;
+        let winLength = 3; // Always 3 in a row to win
+        let soundEnabled = true;
+        let totalStars = 0;
+
+        // Sound effects using Web Audio API
+        function playSound(frequency, duration) {
+            if (!soundEnabled) return;
+            
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = frequency;
+            oscillator.type = 'sine';
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + duration);
+        }
+
+        function playMoveSound() {
+            playSound(400, 0.1);
+        }
+
+        function playWinSound() {
+            playSound(600, 0.2);
+            setTimeout(() => playSound(800, 0.2), 150);
+            setTimeout(() => playSound(1000, 0.3), 300);
+        }
+
+        function playButtonSound() {
+            playSound(300, 0.1);
+        }
+
+        function startGame(mode) {
+            playButtonSound();
+            gameMode = mode;
+            document.querySelector('.menu-screen').classList.add('hidden');
+            document.querySelector('.grid-select-screen').classList.remove('hidden');
+        }
+
+        function selectGrid(size) {
+            playButtonSound();
+            gridSize = size;
+            document.querySelector('.grid-select-screen').classList.add('hidden');
+            document.querySelector('.game-screen').classList.remove('hidden');
+            initializeGame();
+        }
+
+        function backToMenu() {
+            playButtonSound();
+            document.querySelector('.grid-select-screen').classList.add('hidden');
+            document.querySelector('.menu-screen').classList.remove('hidden');
+        }
+
+        function backToGridSelect() {
+            playButtonSound();
+            document.querySelector('.game-screen').classList.add('hidden');
+            document.querySelector('.grid-select-screen').classList.remove('hidden');
+        }
+
+        function showInfo() {
+            playButtonSound();
+            document.getElementById('infoPanel').classList.remove('hidden');
+        }
+
+        function closeInfo() {
+            playButtonSound();
+            document.getElementById('infoPanel').classList.add('hidden');
+        }
+
+        function initializeGame() {
+            board = Array(gridSize * gridSize).fill(null);
+            currentPlayer = 1;
+            gameActive = true;
+            
+            const gameBoard = document.getElementById('gameBoard');
+            gameBoard.innerHTML = '';
+            gameBoard.className = 'game-board grid-' + gridSize;
+            
+            for (let i = 0; i < gridSize * gridSize; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.onclick = () => makeMove(i);
+                gameBoard.appendChild(cell);
+            }
+            
+            updateStatus();
+            updateStarDisplay();
+        }
+
+        function makeMove(index) {
+            if (!gameActive || board[index] !== null) return;
+            
+            playMoveSound();
+            board[index] = currentPlayer;
+            updateBoard();
+            
+            if (checkWin(index)) {
+                gameActive = false;
+                playWinSound();
+                highlightWinningCells();
+                setTimeout(() => showWinDialog(), 500);
+                return;
+            }
+            
+            if (board.every(cell => cell !== null)) {
+                gameActive = false;
+                setTimeout(() => showDrawDialog(), 500);
+                return;
+            }
+            
+            currentPlayer = currentPlayer === 1 ? 2 : 1;
+            updateStatus();
+            
+            // AI move for single player mode
+            if (gameMode === 1 && currentPlayer === 2 && gameActive) {
+                setTimeout(makeAIMove, 500);
+            }
+        }
+
+        function makeAIMove() {
+            // Simple AI: Try to win, block player, or random move
+            let move = findWinningMove(2) || findWinningMove(1) || getRandomMove();
+            if (move !== null) {
+                makeMove(move);
+            }
+        }
+
+        function findWinningMove(player) {
+            for (let i = 0; i < board.length; i++) {
+                if (board[i] === null) {
+                    board[i] = player;
+                    if (checkWin(i)) {
+                        board[i] = null;
+                        return i;
+                    }
+                    board[i] = null;
+                }
+            }
+            return null;
+        }
+
+        function getRandomMove() {
+            const availableMoves = board.reduce((acc, cell, index) => {
+                if (cell === null) acc.push(index);
+                return acc;
+            }, []);
+            return availableMoves.length > 0 ? 
+                availableMoves[Math.floor(Math.random() * availableMoves.length)] : null;
+        }
+
+        function checkWin(lastMove) {
+            const row = Math.floor(lastMove / gridSize);
+            const col = lastMove % gridSize;
+            const player = board[lastMove];
+            
+            // Check horizontal
+            let count = 1;
+            for (let i = col - 1; i >= 0 && board[row * gridSize + i] === player; i--) count++;
+            for (let i = col + 1; i < gridSize && board[row * gridSize + i] === player; i++) count++;
+            if (count >= winLength) return true;
+            
+            // Check vertical
+            count = 1;
+            for (let i = row - 1; i >= 0 && board[i * gridSize + col] === player; i--) count++;
+            for (let i = row + 1; i < gridSize && board[i * gridSize + col] === player; i++) count++;
+            if (count >= winLength) return true;
+            
+            // Check diagonal (top-left to bottom-right)
+            count = 1;
+            for (let i = 1; row - i >= 0 && col - i >= 0 && board[(row - i) * gridSize + (col - i)] === player; i++) count++;
+            for (let i = 1; row + i < gridSize && col + i < gridSize && board[(row + i) * gridSize + (col + i)] === player; i++) count++;
+            if (count >= winLength) return true;
+            
+            // Check diagonal (top-right to bottom-left)
+            count = 1;
+            for (let i = 1; row - i >= 0 && col + i < gridSize && board[(row - i) * gridSize + (col + i)] === player; i++) count++;
+            for (let i = 1; row + i < gridSize && col - i >= 0 && board[(row + i) * gridSize + (col - i)] === player; i++) count++;
+            if (count >= winLength) return true;
+            
+            return false;
+        }
+
+        function highlightWinningCells() {
+            const cells = document.querySelectorAll('.cell');
+            for (let i = 0; i < board.length; i++) {
+                if (board[i] === currentPlayer) {
+                    if (isPartOfWinningLine(i)) {
+                        cells[i].classList.add('winning');
+                    }
+                }
+            }
+        }
+
+        function isPartOfWinningLine(index) {
+            const row = Math.floor(index / gridSize);
+            const col = index % gridSize;
+            const player = board[index];
+            
+            // Check all directions
+            const directions = [
+                [0, 1], [1, 0], [1, 1], [1, -1] // horizontal, vertical, diagonal, anti-diagonal
+            ];
+            
+            for (const [dr, dc] of directions) {
+                let count = 1;
+                
+                // Check forward
+                for (let i = 1; i < winLength; i++) {
+                    const newRow = row + dr * i;
+                    const newCol = col + dc * i;
+                    if (newRow >= 0 && newRow < gridSize && newCol >= 0 && newCol < gridSize &&
+                        board[newRow * gridSize + newCol] === player) {
+                        count++;
+                    } else break;
+                }
+                
+                // Check backward
+                for (let i = 1; i < winLength; i++) {
+                    const newRow = row - dr * i;
+                    const newCol = col - dc * i;
+                    if (newRow >= 0 && newRow < gridSize && newCol >= 0 && newCol < gridSize &&
+                        board[newRow * gridSize + newCol] === player) {
+                        count++;
+                    } else break;
+                }
+                
+                if (count >= winLength) return true;
+            }
+            
+            return false;
+        }
+
+        function showWinDialog() {
+            totalStars++;
+            const modal = document.getElementById('winModal');
+            const symbol = document.getElementById('winSymbol');
+            const text = document.getElementById('winText');
+            const points = document.getElementById('winPointsCount');
+            
+            if (currentPlayer === 1) {
+                symbol.innerHTML = '<span class="x-mark">X</span>';
+                text.textContent = gameMode === 1 ? 'PLAYER 1 WINS!!!' : 'PLAYER 1 WINS!!!';
+            } else {
+                symbol.innerHTML = '<span class="o-mark">O</span>';
+                text.textContent = gameMode === 1 ? 'COMPUTER WINS!!!' : 'PLAYER 2 WINS!!!';
+            }
+            
+            points.textContent = totalStars;
+            modal.classList.remove('hidden');
+            updateStarDisplay();
+        }
+
+        function showDrawDialog() {
+            const modal = document.getElementById('winModal');
+            const symbol = document.getElementById('winSymbol');
+            const text = document.getElementById('winText');
+            const points = document.getElementById('winPointsCount');
+            
+            symbol.innerHTML = '<span style="color: #d4a574;">-</span>';
+            text.textContent = "IT'S A DRAW!";
+            points.textContent = totalStars;
+            modal.classList.remove('hidden');
+        }
+
+        function playAgain() {
+            playButtonSound();
+            document.getElementById('winModal').classList.add('hidden');
+            initializeGame();
+        }
+
+        function updateBoard() {
+            const cells = document.querySelectorAll('.cell');
+            cells.forEach((cell, index) => {
+                if (board[index] === 1) {
+                    cell.innerHTML = '<span class="x-mark">X</span>';
+                    cell.classList.add('filled');
+                } else if (board[index] === 2) {
+                    cell.innerHTML = '<span class="o-mark">O</span>';
+                    cell.classList.add('filled');
+                }
+            });
+        }
+
+        function updateStatus() {
+            const status = document.getElementById('status');
+            if (gameActive) {
+                if (gameMode === 1) {
+                    status.textContent = currentPlayer === 1 ? 'PLAYER 1 TO MOVE' : 'COMPUTER TO MOVE';
+                } else {
+                    status.textContent = `PLAYER ${currentPlayer} TO MOVE`;
+                }
+            }
+        }
+
+        function updateStarDisplay() {
+            const starCount = document.getElementById('starCount');
+            if (starCount) {
+                starCount.textContent = totalStars;
+            }
+        }
+
+        function resetGame() {
+            playButtonSound();
+            initializeGame();
+        }
+
+        // Sound toggle
+        document.getElementById('soundBtn').onclick = function() {
+            soundEnabled = !soundEnabled;
+            this.textContent = soundEnabled ? '🔊' : '🔇';
+            playButtonSound();
+        };
+
+        // Click sound for grid options
+        document.querySelectorAll('.grid-option').forEach(option => {
+            option.addEventListener('click', playButtonSound);
+        });
+    </script>
+</body>
+</html>
