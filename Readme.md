@@ -36,21 +36,21 @@ A beautiful, feature-rich Tic Tac Toe game with a stunning wooden theme, multipl
 
 ## 🚀 Live Demo
 
-[Play the Game Live](#) <!-- Add your GitHub Pages link here -->
+[Play the Game Live](https://jayanti1008.github.io/Tic-Tac-Toe-Game/tic-tac-toe.html)
 
 ## 📸 Screenshots
 
 ### Main Menu
-The game starts with an attractive main menu featuring the classic Tic Tac Toe board design.
+![Main Menu](Images/Main_Menu.png)
 
 ### Grid Selection
-Choose from three different grid sizes to match your skill level.
+![Grid Selection](Images/Grid_Selection.png)
 
 ### Gameplay
-Clean, intuitive interface with clear player indicators and move tracking.
+![Gameplay](Images/Gameplay.png)
 
 ### Win Screen
-Celebrate your victories with an animated win dialog showing your earned stars.
+![Win Screen](Images/Win_Screen.png)
 
 ## 🛠️ Technologies Used
 
