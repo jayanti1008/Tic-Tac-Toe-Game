@@ -76,7 +76,7 @@ A beautiful, feature-rich Tic Tac Toe game with a stunning wooden theme, multipl
 ### Option 2: Clone Repository
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR-USERNAME/tic-tac-toe-game.git
+git clone https://github.com/jayanti1008/tic-tac-toe-game.git
 
 # Navigate to directory
 cd tic-tac-toe-game
@@ -204,8 +204,8 @@ This project is open source and available under the [MIT License](LICENSE).
 ## 👨‍💻 Author
 
 **Jayanti**
-- GitHub: (https://github.com/jayanti1008)
-- LinkedIn: (https://www.linkedin.com/in/jayanti-singh-50683332b)
+- GitHub: https://github.com/jayanti1008
+- LinkedIn: https://www.linkedin.com/in/jayanti-singh-50683332b
 
 ## 🙏 Acknowledgments
 
